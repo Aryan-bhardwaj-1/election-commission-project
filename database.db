@@ -1,0 +1,15 @@
+CREATE DATABASE electiondb;
+
+USE electiondb;
+
+CREATE TABLE voters (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    phone VARCHAR(15),
+    email VARCHAR(100),
+    aadhaar VARCHAR(20),
+    aadhaar_file VARCHAR(255),
+    voter_id VARCHAR(50),
+    password VARCHAR(255),
+    status VARCHAR(20) DEFAULT 'Pending'
+);

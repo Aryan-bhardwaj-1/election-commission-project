@@ -1,0 +1,24 @@
+<table border="1">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Status</th>
+    <th>Action</th>
+</tr>
+
+{% for voter in voters %}
+<tr>
+    <td>{{ voter.id }}</td>
+    <td>{{ voter.name }}</td>
+    <td>{{ voter.email }}</td>
+    <td>{{ voter.status }}</td>
+
+    <td>
+        <a href="/approve/{{ voter.id }}">Approve</a>
+        |
+        <a href="/reject/{{ voter.id }}">Reject</a>
+    </td>
+</tr>
+{% endfor %}
+</table>

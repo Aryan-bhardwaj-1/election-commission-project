@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vote</title>
+</head>
+<body>
+
+<h2>Choose Your Candidate</h2>
+
+<form method="POST" action="/submit-vote">
+
+{% for c in candidates %}
+<input type="radio" name="candidate" value="{{ c.id }}">
+{{ c.name }} - {{ c.party }}
+<br><br>
+{% endfor %}
+
+<button type="submit">
+Vote
+</button>
+
+</form>
+
+</body>
+</html>

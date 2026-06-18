@@ -1,0 +1,29 @@
+<body>
+
+<h1>Election Results</h1>
+
+<table border="1" cellpadding="10">
+    <tr>
+        <th>Candidate</th>
+        <th>Party</th>
+        <th>Votes</th>
+    </tr>
+
+    {% for c in candidates %}
+    <tr>
+        <td>{{ c.name }}</td>
+        <td>{{ c.party }}</td>
+        <td>{{ c.votes }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+<br>
+{% set winner = candidates|sort(attribute='votes', reverse=True)|first %}
+
+<h2>
+Winner: {{ winner.name }}
+</h2>
+
+</body>
