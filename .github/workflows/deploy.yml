@@ -1,4 +1,4 @@
-xname: Deploy Flask App
+name: Test Workflow
 
 on:
   push:
@@ -6,26 +6,13 @@ on:
       - main
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-    - name: Checkout Code
-      uses: actions/checkout@v4
-
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v1.0.3
-
-      with:
-        host: ${{ secrets.HOST }}
-        username: ubuntu
-        key: ${{ secrets.SSH_KEY }}
-
-        script: |
-          cd election-commission-project
-          git pull origin main
-          source venv/bin/activate
-          pip install -r requirements.txt
-          sudo systemctl restart election
-          
+      - name: Success Message
+        run: echo "Workflow is working"
+        
