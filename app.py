@@ -3,19 +3,31 @@ from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+import os
+from urllib.parse import quote_plus
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".env"))
+print("DB_USER =", os.getenv("DB_USER"))
+print("DB_PASSWORD =", os.getenv("DB_PASSWORD"))
+print("DB_NAME =", os.getenv("DB_NAME"))
 import random
 app = Flask(__name__)
-app.secret_key = "secret123"
+app.secret_key = app.secret_key = os.getenv("SECRET_KEY")
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'bhardwajaryan20060506@gmail.com'
-app.config['MAIL_PASSWORD'] = 'xcsynyeblscjdmer'
+app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
 
 mail = Mail(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-'mysql+pymysql://root:Arya%40123@localhost/electiondb'
+password = quote_plus(os.getenv("DB_PASSWORD"))
+
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{os.getenv('DB_USER')}:{password}@localhost/{os.getenv('DB_NAME')}"
+)
+
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -31,15 +43,13 @@ class Voter(db.Model):
     password = db.Column(db.String(255))
     status = db.Column(db.String(20), default="Pending")
     has_voted = db.Column(db.Boolean, default=False)
-    with app.app_context():
-      db.create_all()
+
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     party = db.Column(db.String(100))
     votes = db.Column(db.Integer, default=0)
-    with app.app_context():
-      db.create_all()
+
 class Test(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -200,7 +210,7 @@ def vote():
     )
 
 @app.route('/candidates')
-def candidates():
+def candidateas():
 
     data = Candidate.query.all()
 
@@ -256,7 +266,10 @@ def logout():
     return redirect('/voter_login')
     
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
+    
     
     
     
