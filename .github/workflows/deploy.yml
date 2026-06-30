@@ -1,24 +1,19 @@
-name: Auto Deploy to EC2
+name: Deploy Flask App
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd /home/ubuntu/election-commission-project
-            git pull origin main
-            source venv/bin/activate
-            pip install -r requirements.txt
-            sudo systemctl restart election
+    - name: SSH and Deploy
+      run: |
+        ssh ubuntu@EC2_IP "
+          cd election-commission-project &&
+          git pull origin main &&
+          pkill -f app.py &&
+          nohup python3 app.py &
+        "
