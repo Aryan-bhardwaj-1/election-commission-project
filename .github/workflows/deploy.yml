@@ -1,19 +1,34 @@
-name: Deploy Flask App
+name: Deploy Flask App to EC2
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: SSH and Deploy
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH key
       run: |
-        ssh ubuntu@EC2_IP "
-          cd election-commission-project &&
-          git pull origin main &&
-          pkill -f app.py &&
-          nohup python3 app.py &
-        "
+        echo "${{ secrets.EC2_PEM }}" > key.pem
+        chmod 400 key.pem
+
+    - name: Deploy to EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.EC2_HOST }} << 'EOF'
+          cd election-commission-project
+
+          # Pull latest code
+          git pull origin main
+
+          # Stop previous Flask process safely
+          pkill -f app.py || true
+
+          # Start app again in background
+          nohup python3 app.py > app.log 2>&1 &
+
+        EOF
